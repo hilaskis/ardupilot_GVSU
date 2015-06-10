@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.cpp.d
 
 # Precompiled Headers
 *.gch

@@ -14,7 +14,7 @@ void Copter::userhook_init()
 void Copter::userhook_FastLoop()
 {
     // put your 100Hz code here
-    copter.gcs_send_message(MSG_PHASE_OFFSET);
+    //copter.gcs_send_message(MSG_PHASE_OFFSET);
 
     const Compass* comp = copter.ahrs.get_compass();
     float heading = comp->calculate_heading(copter.ahrs.get_dcm_matrix());
