@@ -35,7 +35,7 @@ MAVLink_routing::MAVLink_routing(void) : num_routes(0) {}
   forward a MAVLink message to the right port. This also
   automatically learns the route for the sender if it is not
   already known.
-  
+
   This returns true if the message should be processed locally
 
   Theory of MAVLink routing:
@@ -51,7 +51,7 @@ MAVLink_routing::MAVLink_routing(void) : num_routes(0) {}
        target_component field
 
     1d) the message has the flight controllers target system and has
-       the flight controllers target_component 
+       the flight controllers target_component
 
     1e) the message has the flight controllers target system and the
         flight controller has not seen any messages on any of its links
@@ -60,7 +60,7 @@ MAVLink_routing::MAVLink_routing(void) : num_routes(0) {}
 
   When a flight controller receives a message it should forward it
   onto another different link if any of these conditions hold for that
-  link: 
+  link:
 
     2a) the message has no target_system field
 
@@ -81,7 +81,7 @@ until they have received at least one package from that destination
 over the link. This is essential to prevent a flight controller from
 acting on a message that is not meant for it. For example, a PARAM_SET
 cannot be sent to a specific sysid/compid combination until the GCS
-has seen a packet from that sysid/compid combination on the link. 
+has seen a packet from that sysid/compid combination on the link.
 
 The GCS must also reset what sysid/compid combinations it has seen on
 a link when it sees a SYSTEM_TIME message with a decrease in
@@ -94,7 +94,7 @@ bool MAVLink_routing::check_and_forward(mavlink_channel_t in_channel, const mavl
 {
     // handle the case of loopback of our own messages, due to
     // incorrect serial configuration.
-    if (msg->sysid == mavlink_system.sysid && 
+    if (msg->sysid == mavlink_system.sysid &&
         msg->compid == mavlink_system.compid) {
         return true;
     }
@@ -116,7 +116,7 @@ bool MAVLink_routing::check_and_forward(mavlink_channel_t in_channel, const mavl
     bool broadcast_system = (target_system == 0 || target_system == -1);
     bool broadcast_component = (target_component == 0 || target_component == -1);
     bool match_system = broadcast_system || (target_system == mavlink_system.sysid);
-    bool match_component = match_system && (broadcast_component || 
+    bool match_component = match_system && (broadcast_component ||
                                             (target_component == mavlink_system.compid));
     bool process_locally = match_system && match_component;
 
@@ -129,10 +129,10 @@ bool MAVLink_routing::check_and_forward(mavlink_channel_t in_channel, const mavl
     bool forwarded = false;
     for (uint8_t i=0; i<num_routes; i++) {
         if (broadcast_system || (target_system == routes[i].sysid &&
-                                 (broadcast_component || 
+                                 (broadcast_component ||
                                   target_component == routes[i].compid))) {
             if (in_channel != routes[i].channel) {
-                if (comm_get_txspace(routes[i].channel) >= 
+                if (comm_get_txspace(routes[i].channel) >=
                     ((uint16_t)msg->len) + MAVLINK_NUM_NON_PAYLOAD_BYTES) {
 #if ROUTING_DEBUG
                     ::printf("fwd msg %u from chan %u on chan %u sysid=%u compid=%u\n",
@@ -189,13 +189,13 @@ void MAVLink_routing::send_to_components(const mavlink_message_t* msg)
 void MAVLink_routing::learn_route(mavlink_channel_t in_channel, const mavlink_message_t* msg)
 {
     uint8_t i;
-    if (msg->sysid == 0 || 
-        (msg->sysid == mavlink_system.sysid && 
+    if (msg->sysid == 0 ||
+        (msg->sysid == mavlink_system.sysid &&
          msg->compid == mavlink_system.compid)) {
         return;
     }
     for (i=0; i<num_routes; i++) {
-        if (routes[i].sysid == msg->sysid && 
+        if (routes[i].sysid == msg->sysid &&
             routes[i].compid == msg->compid &&
             routes[i].channel == in_channel) {
             break;
@@ -208,7 +208,7 @@ void MAVLink_routing::learn_route(mavlink_channel_t in_channel, const mavlink_me
         num_routes++;
 #if ROUTING_DEBUG
         ::printf("learned route %u %u via %u\n",
-                 (unsigned)msg->sysid, 
+                 (unsigned)msg->sysid,
                  (unsigned)msg->compid,
                  (unsigned)in_channel);
 #endif
@@ -279,7 +279,7 @@ void MAVLink_routing::get_targets(const mavlink_message_t* msg, int16_t &sysid, 
     //
     // TODO: we should write a python script to extract this list
     // properly
-    
+
     switch (msg->msgid) {
         // these messages only have a target system
     case MAVLINK_MSG_ID_CAMERA_FEEDBACK:
@@ -465,4 +465,3 @@ void MAVLink_routing::get_targets(const mavlink_message_t* msg, int16_t &sysid, 
         break;
     }
 }
-

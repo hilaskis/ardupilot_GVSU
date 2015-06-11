@@ -4,6 +4,10 @@
 *.o
 *.obj
 *.cpp.d
+*.px4
+*.bin
+*.tlog
+*.tlog.raw
 
 # Precompiled Headers
 *.gch
