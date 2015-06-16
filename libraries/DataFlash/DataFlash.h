@@ -51,7 +51,7 @@ public:
     virtual uint16_t get_num_logs(void) = 0;
 #ifndef DATAFLASH_NO_CLI
     virtual void LogReadProcess(uint16_t log_num,
-                                uint16_t start_page, uint16_t end_page, 
+                                uint16_t start_page, uint16_t end_page,
                                 print_mode_fn printMode,
                                 AP_HAL::BetterStream *port) = 0;
     virtual void DumpPageInfo(AP_HAL::BetterStream *port) = 0;
@@ -88,6 +88,7 @@ public:
     void Log_Write_Compass(const Compass &compass);
     void Log_Write_Mode(uint8_t mode);
     void Log_Write_Parameters(void);
+    int Log_Write_Bearing(uint16_t value);
 
     // This structure provides information on the internal member data of a PID for logging purposes
     struct PID_Info {
@@ -114,12 +115,12 @@ protected:
     /*
     read and print a log entry using the format strings from the given structure
     */
-    void _print_log_entry(uint8_t msg_type, 
+    void _print_log_entry(uint8_t msg_type,
                           print_mode_fn print_mode,
                           AP_HAL::BetterStream *port);
-    
+
     void Log_Fill_Format(const struct LogStructure *structure, struct log_Format &pkt);
-    void Log_Write_Parameter(const AP_Param *ap, const AP_Param::ParamToken &token, 
+    void Log_Write_Parameter(const AP_Param *ap, const AP_Param::ParamToken &token,
                              enum ap_var_type type);
     virtual uint16_t start_new_log(void) = 0;
 
@@ -541,7 +542,7 @@ struct PACKED log_GPS_RAW {
 
 struct PACKED log_Esc {
     LOG_PACKET_HEADER;
-    uint64_t time_us;     
+    uint64_t time_us;
     int16_t rpm;
     int16_t voltage;
     int16_t current;
@@ -570,6 +571,12 @@ struct PACKED log_GYRO {
     uint64_t time_us;
     uint64_t sample_us;
     float GyrX, GyrY, GyrZ;
+};
+
+struct PACKED log_BEARING {
+    LOG_PACKET_HEADER;
+    uint16_t absBearing;
+    uint64_t time_us;
 };
 
 /*
@@ -630,7 +637,9 @@ Format characters in the format string for binary log messages
     { LOG_COMPASS_MSG, sizeof(log_Compass), \
       "MAG", "QhhhhhhhhhB",    "TimeUS,MagX,MagY,MagZ,OfsX,OfsY,OfsZ,MOfsX,MOfsY,MOfsZ,Health" }, \
     { LOG_MODE_MSG, sizeof(log_Mode), \
-      "MODE", "QMB",         "TimeUS,Mode,ModeNum" }
+      "MODE", "QMB",         "TimeUS,Mode,ModeNum" },\
+    { LOG_ABS_BEAR, sizeof(log_BEARING), \
+      "BEARING", "TimeUS"}
 
 // messages for more advanced boards
 #define LOG_EXTRA_STRUCTURES \
@@ -773,6 +782,7 @@ Format characters in the format string for binary log messages
 #define LOG_PIDP_MSG      180
 #define LOG_PIDY_MSG      181
 #define LOG_PIDA_MSG      182
+#define LOG_ABS_BEAR_MSG  188
 
 // message types 200 to 210 reversed for GPS driver use
 // message types 211 to 220 reversed for autotune use

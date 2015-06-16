@@ -18,6 +18,18 @@ void Copter::userhook_FastLoop()
 
     const Compass* comp = copter.ahrs.get_compass();
     float heading = comp->calculate_heading(copter.ahrs.get_dcm_matrix());
+    //gcs_send_text_P(SEVERITY_HIGH, PSTR("In the user fast loop"));
+
+    int x = -1;
+
+    x = DataFlash.Log_Write_Bearing(180);
+
+    if(x == -1){
+      gcs_send_text_P(SEVERITY_HIGH, PSTR("No Logging"));
+    }
+    else{
+      gcs_send_text_P(SEVERITY_HIGH, PSTR("Logging"));
+    }
 }
 #endif
 
