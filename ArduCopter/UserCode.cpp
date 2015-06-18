@@ -24,12 +24,13 @@ void Copter::userhook_FastLoop()
 
     x = DataFlash.Log_Write_Bearing(180);
 
-    if(x == -1){
+    // For debugging
+    /*if(x == -1){
       gcs_send_text_P(SEVERITY_HIGH, PSTR("No Logging"));
     }
     else{
       gcs_send_text_P(SEVERITY_HIGH, PSTR("Logging"));
-    }
+    }*/
 }
 #endif
 
