@@ -795,7 +795,7 @@ void DataFlash_Class::Log_Write_Baro(AP_Baro &baro)
             temperature   : (int16_t)(baro.get_temperature(1) * 100),
             climbrate     : baro.get_climb_rate()
         };
-        WriteBlock(&pkt2, sizeof(pkt2));
+        WriteBlock(&pkt2, sizeof(pkt2));        
     }
 #endif
 }
@@ -1111,7 +1111,7 @@ void DataFlash_Class::Log_Write_MavCmd(uint16_t cmd_total, const mavlink_mission
     WriteBlock(&pkt, sizeof(pkt));
 }
 
-void DataFlash_Class::Log_Write_Radio(const mavlink_radio_t &packet)
+void DataFlash_Class::Log_Write_Radio(const mavlink_radio_t &packet) 
 {
     struct log_Radio pkt = {
         LOG_PACKET_HEADER_INIT(LOG_RADIO_MSG),
@@ -1124,7 +1124,7 @@ void DataFlash_Class::Log_Write_Radio(const mavlink_radio_t &packet)
         rxerrors     : packet.rxerrors,
         fixed        : packet.fixed
     };
-    WriteBlock(&pkt, sizeof(pkt));
+    WriteBlock(&pkt, sizeof(pkt)); 
 }
 
 // Write a Camera packet
@@ -1195,7 +1195,7 @@ void DataFlash_Class::Log_Write_Compass(const Compass &compass)
 {
     const Vector3f &mag_field = compass.get_field(0);
     const Vector3f &mag_offsets = compass.get_offsets(0);
-    const Vector3f &mag_motor_offsets = compass.get_motor_offsets(0);
+    const Vector3f &mag_motor_offsets = compass.get_motor_offsets(0);   
     struct log_Compass pkt = {
         LOG_PACKET_HEADER_INIT(LOG_COMPASS_MSG),
         time_us         : hal.scheduler->micros64(),
@@ -1211,12 +1211,12 @@ void DataFlash_Class::Log_Write_Compass(const Compass &compass)
         health          : (uint8_t)compass.healthy(0)
     };
     WriteBlock(&pkt, sizeof(pkt));
-
+    
 #if COMPASS_MAX_INSTANCES > 1
     if (compass.get_count() > 1) {
         const Vector3f &mag_field2 = compass.get_field(1);
         const Vector3f &mag_offsets2 = compass.get_offsets(1);
-        const Vector3f &mag_motor_offsets2 = compass.get_motor_offsets(1);
+        const Vector3f &mag_motor_offsets2 = compass.get_motor_offsets(1);   
         struct log_Compass pkt2 = {
             LOG_PACKET_HEADER_INIT(LOG_COMPASS2_MSG),
             time_us         : hal.scheduler->micros64(),
@@ -1238,7 +1238,7 @@ void DataFlash_Class::Log_Write_Compass(const Compass &compass)
     if (compass.get_count() > 2) {
         const Vector3f &mag_field3 = compass.get_field(2);
         const Vector3f &mag_offsets3 = compass.get_offsets(2);
-        const Vector3f &mag_motor_offsets3 = compass.get_motor_offsets(2);
+        const Vector3f &mag_motor_offsets3 = compass.get_motor_offsets(2);   
         struct log_Compass pkt3 = {
             LOG_PACKET_HEADER_INIT(LOG_COMPASS3_MSG),
             time_us         : hal.scheduler->micros64(),
@@ -1279,8 +1279,8 @@ void DataFlash_Class::Log_Write_ESC(void)
 
     if (_esc_status_sub == -1) {
         // subscribe to ORB topic on first call
-        _esc_status_sub = orb_subscribe(ORB_ID(esc_status));
-    }
+        _esc_status_sub = orb_subscribe(ORB_ID(esc_status));  
+    } 
 
     // check for new ESC status data
     bool esc_updated = false;
@@ -1344,16 +1344,4 @@ void DataFlash_Class::Log_Write_PID(uint8_t msg_type, const PID_Info &info)
         AFF             : info.AFF
     };
     WriteBlock(&pkt, sizeof(pkt));
-}
-
-int DataFlash_Class::Log_Write_Bearing(uint16_t value)
-{
-    struct log_BEARING pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
-        absBearing  : value,
-        time_us     : hal.scheduler->micros64()
-    };
-    WriteBlock(&pkt, sizeof(pkt));
-
-    return 0;
 }
