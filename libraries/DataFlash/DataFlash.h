@@ -637,9 +637,9 @@ Format characters in the format string for binary log messages
     { LOG_COMPASS_MSG, sizeof(log_Compass), \
       "MAG", "QhhhhhhhhhB",    "TimeUS,MagX,MagY,MagZ,OfsX,OfsY,OfsZ,MOfsX,MOfsY,MOfsZ,Health" }, \
     { LOG_MODE_MSG, sizeof(log_Mode), \
-      "MODE", "QMB",         "TimeUS,Mode,ModeNum" },\
+      "MODE", "QMB",         "TimeUS,Mode,ModeNum" }/*,\
     { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
-      "BEARING", "TimeUS"}
+      "BEARING", "TimeUS"}*/
 
 // messages for more advanced boards
 #define LOG_EXTRA_STRUCTURES \
@@ -716,7 +716,9 @@ Format characters in the format string for binary log messages
     { LOG_PIDA_MSG, sizeof(log_PID), \
       "PIDA", "Qffffff",  "TimeUS,Des,P,I,D,FF,AFF" }, \
     { LOG_BAR2_MSG, sizeof(log_BARO), \
-      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }
+      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }/*, \
+    { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
+      "BEARING", "TimeUS"}*/
 
 #if HAL_CPU_CLASS >= HAL_CPU_CLASS_75
 #define LOG_COMMON_STRUCTURES LOG_BASE_STRUCTURES, LOG_EXTRA_STRUCTURES
