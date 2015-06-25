@@ -20,16 +20,6 @@ void Copter::userhook_FastLoop()
     float heading = comp->calculate_heading(copter.ahrs.get_dcm_matrix());
     //gcs_send_text_P(SEVERITY_HIGH, PSTR("In the user fast loop"));
 
-    int x = -1;
-
-    x = DataFlash.Log_Write_Bearing(180);
-
-    if(x == -1){
-      gcs_send_text_P(SEVERITY_HIGH, PSTR("No Logging"));
-    }
-    else{
-      gcs_send_text_P(SEVERITY_HIGH, PSTR("Logging"));
-    }
 }
 #endif
 
@@ -58,5 +48,6 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
+    DataFlash.Log_Write_Bearing(180);
 }
 #endif
