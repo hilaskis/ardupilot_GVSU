@@ -10,6 +10,7 @@
 #include "../AP_BattMonitor/AP_BattMonitor.h"
 #include <AP_Compass.h>
 
+
 extern const AP_HAL::HAL& hal;
 
 void DataFlash_Class::Init(const struct LogStructure *structure, uint8_t num_types)
@@ -1346,14 +1347,12 @@ void DataFlash_Class::Log_Write_PID(uint8_t msg_type, const PID_Info &info)
     WriteBlock(&pkt, sizeof(pkt));
 }
 
-int DataFlash_Class::Log_Write_Bearing(uint16_t value)
+void DataFlash_Class::Log_Write_Bearing(uint16_t value)
 {
     struct log_BEARING pkt = {
         LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
-        absBearing  : value,
-        time_us     : hal.scheduler->micros64()
+        time_us     : hal.scheduler->micros64(),
+        absBearing  : value
     };
     WriteBlock(&pkt, sizeof(pkt));
-
-    return 0;
 }
