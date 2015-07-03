@@ -48,6 +48,8 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
-    DataFlash.Log_Write_Bearing(180);
+
+    Log_Write_Bearing(180, 25);
+
 }
 #endif

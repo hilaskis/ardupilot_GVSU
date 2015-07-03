@@ -654,6 +654,13 @@ void Copter::Log_Write_Parameter_Tuning(uint8_t param, float tuning_val, int16_t
     DataFlash.WriteBlock(&pkt_tune, sizeof(pkt_tune));
 }
 
+struct PACKED log_BEARING {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    float absBearing;
+    float mag;
+};
+
 const struct LogStructure Copter::log_structure[] PROGMEM = {
     LOG_COMMON_STRUCTURES,
 #if AUTOTUNE_ENABLED == ENABLED
@@ -692,6 +699,8 @@ const struct LogStructure Copter::log_structure[] PROGMEM = {
       "DFLT",  "QBf",         "TimeUS,Id,Value" },
     { LOG_ERROR_MSG, sizeof(log_Error),
       "ERR",   "QBB",         "TimeUS,Subsys,ECode" },
+    { LOG_ABS_BEAR_MSG, sizeof(log_BEARING),
+      "BEAR", "Qff", "TimeUS,absBearing,mag"},
 };
 
 #if CLI_ENABLED == ENABLED
@@ -752,6 +761,19 @@ void Copter::log_init(void)
         do_erase_logs();
         gcs[0].reset_cli_timeout();
     }
+}
+
+
+
+void Copter::Log_Write_Bearing(float newAbs, float newMag)
+{
+    struct log_BEARING pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
+        time_us     : hal.scheduler->micros64(),
+        absBearing  : newAbs,
+        mag         : newMag
+    };
+    DataFlash.WriteBlock(&pkt, sizeof(pkt));
 }
 
 #endif // LOGGING_DISABLED

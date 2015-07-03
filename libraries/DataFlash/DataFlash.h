@@ -89,7 +89,7 @@ public:
     void Log_Write_Compass(const Compass &compass);
     void Log_Write_Mode(uint8_t mode);
     void Log_Write_Parameters(void);
-    void Log_Write_Bearing(uint16_t value);
+    void Log_Write_Bearing(float newAbs, float newMag);
 
     // This structure provides information on the internal member data of a PID for logging purposes
     struct PID_Info {
@@ -574,11 +574,12 @@ struct PACKED log_GYRO {
     float GyrX, GyrY, GyrZ;
 };
 
-struct PACKED log_BEARING {
+/*struct PACKED log_BEARING {
     LOG_PACKET_HEADER;
     uint64_t time_us;
-    uint16_t absBearing;
-};
+    float absBearing;
+    float mag;
+};*/
 
 /*
 Format characters in the format string for binary log messages
@@ -640,7 +641,7 @@ Format characters in the format string for binary log messages
     { LOG_MODE_MSG, sizeof(log_Mode), \
       "MODE", "QMB",         "TimeUS,Mode,ModeNum" }/*,\
     { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
-      "BEAR", "QH", "TimeUS,absBearing"}*/
+      "BEAR", "Qff", "TimeUS,absBearing,mag"}*/
 
 // messages for more advanced boards
 #define LOG_EXTRA_STRUCTURES \
@@ -717,9 +718,9 @@ Format characters in the format string for binary log messages
     { LOG_PIDA_MSG, sizeof(log_PID), \
       "PIDA", "Qffffff",  "TimeUS,Des,P,I,D,FF,AFF" }, \
     { LOG_BAR2_MSG, sizeof(log_BARO), \
-      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }, \
+      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }/*, \
     { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
-      "BEAR", "QH", "TimeUS,absBearing"}
+      "BEAR", "Qff", "TimeUS,absBearing,mag"}*/
 
 #if HAL_CPU_CLASS >= HAL_CPU_CLASS_75
 #define LOG_COMMON_STRUCTURES LOG_BASE_STRUCTURES, LOG_EXTRA_STRUCTURES

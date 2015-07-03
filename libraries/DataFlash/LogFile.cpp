@@ -1347,12 +1347,13 @@ void DataFlash_Class::Log_Write_PID(uint8_t msg_type, const PID_Info &info)
     WriteBlock(&pkt, sizeof(pkt));
 }
 
-void DataFlash_Class::Log_Write_Bearing(uint16_t value)
+/*void DataFlash_Class::Log_Write_Bearing(float newAbs, float newMag)
 {
     struct log_BEARING pkt = {
         LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
         time_us     : hal.scheduler->micros64(),
-        absBearing  : value
+        absBearing  : newAbs,
+        mag         : newMag
     };
     WriteBlock(&pkt, sizeof(pkt));
-}
+}*/

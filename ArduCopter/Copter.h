@@ -513,6 +513,8 @@ private:
     static const AP_Param::Info var_info[];
     static const struct LogStructure log_structure[];
 
+    void Log_Write_Bearing(float newAbs, float newMag);
+
     void compass_accumulate(void);
     void barometer_accumulate(void);
     void perf_update(void);
