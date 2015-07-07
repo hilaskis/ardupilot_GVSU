@@ -511,17 +511,25 @@ private:
 
     static const AP_Scheduler::Task scheduler_tasks[];
     static const AP_Param::Info var_info[];
-    static const struct LogStructure log_structure[];
+    static const struct LogStructure log_structure[];	
+	
+	/******************************************************************
+	* The following is necessary for logging of the received signal
+	* info on the SD card. It defines a MACRO for the message, a 
+	* function prototype, and a structure of the log.
+	******************************************************************/
     #define LOG_ABS_BEAR_MSG  188
+	
     void Log_Write_Bearing(float newAbs, float newMag);
 
     struct PACKED log_BEARING {
         LOG_PACKET_HEADER;
-        //uint64_t time_us;
         float absBearing;
         float mag;
     };
 
+	// End of code for SD logging of absolute bearing.
+	
     void compass_accumulate(void);
     void barometer_accumulate(void);
     void perf_update(void);

@@ -757,17 +757,4 @@ void Copter::log_init(void)
     }
 }
 
-
-
-/*void Copter::Log_Write_Bearing(float newAbs, float newMag)
-{
-    struct log_BEARING pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
-        time_us     : hal.scheduler->micros64(),
-        absBearing  : newAbs,
-        mag         : newMag
-    };
-    DataFlash.WriteBlock(&pkt, sizeof(pkt));
-}*/
-
 #endif // LOGGING_DISABLED
