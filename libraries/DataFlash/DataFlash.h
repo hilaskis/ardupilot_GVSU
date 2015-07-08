@@ -89,7 +89,7 @@ public:
     void Log_Write_Compass(const Compass &compass);
     void Log_Write_Mode(uint8_t mode);
     void Log_Write_Parameters(void);
-    void Log_Write_Bearing(float newAbs, float newMag);
+    //void Log_Write_Bearing(float newAbs, float newMag);
 
     // This structure provides information on the internal member data of a PID for logging purposes
     struct PID_Info {
@@ -574,12 +574,7 @@ struct PACKED log_GYRO {
     float GyrX, GyrY, GyrZ;
 };
 
-/*struct PACKED log_BEARING {
-    LOG_PACKET_HEADER;
-    uint64_t time_us;
-    float absBearing;
-    float mag;
-};*/
+
 
 /*
 Format characters in the format string for binary log messages
@@ -639,9 +634,7 @@ Format characters in the format string for binary log messages
     { LOG_COMPASS_MSG, sizeof(log_Compass), \
       "MAG", "QhhhhhhhhhB",    "TimeUS,MagX,MagY,MagZ,OfsX,OfsY,OfsZ,MOfsX,MOfsY,MOfsZ,Health" }, \
     { LOG_MODE_MSG, sizeof(log_Mode), \
-      "MODE", "QMB",         "TimeUS,Mode,ModeNum" }/*,\
-    { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
-      "BEAR", "Qff", "TimeUS,absBearing,mag"}*/
+      "MODE", "QMB",         "TimeUS,Mode,ModeNum" }
 
 // messages for more advanced boards
 #define LOG_EXTRA_STRUCTURES \
@@ -718,9 +711,7 @@ Format characters in the format string for binary log messages
     { LOG_PIDA_MSG, sizeof(log_PID), \
       "PIDA", "Qffffff",  "TimeUS,Des,P,I,D,FF,AFF" }, \
     { LOG_BAR2_MSG, sizeof(log_BARO), \
-      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }/*, \
-    { LOG_ABS_BEAR_MSG, sizeof(log_BEARING), \
-      "BEAR", "Qff", "TimeUS,absBearing,mag"}*/
+      "BAR2",  "Qffcf", "TimeUS,Alt,Press,Temp,CRt" }
 
 #if HAL_CPU_CLASS >= HAL_CPU_CLASS_75
 #define LOG_COMMON_STRUCTURES LOG_BASE_STRUCTURES, LOG_EXTRA_STRUCTURES
@@ -786,7 +777,7 @@ Format characters in the format string for binary log messages
 #define LOG_PIDP_MSG      180
 #define LOG_PIDY_MSG      181
 #define LOG_PIDA_MSG      182
-#define LOG_ABS_BEAR_MSG  188
+//#define LOG_ABS_BEAR_MSG  188
 
 // message types 200 to 210 reversed for GPS driver use
 // message types 211 to 220 reversed for autotune use

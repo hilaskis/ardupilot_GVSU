@@ -512,8 +512,15 @@ private:
     static const AP_Scheduler::Task scheduler_tasks[];
     static const AP_Param::Info var_info[];
     static const struct LogStructure log_structure[];
-
+    #define LOG_ABS_BEAR_MSG  188
     void Log_Write_Bearing(float newAbs, float newMag);
+
+    struct PACKED log_BEARING {
+        LOG_PACKET_HEADER;
+        //uint64_t time_us;
+        float absBearing;
+        float mag;
+    };
 
     void compass_accumulate(void);
     void barometer_accumulate(void);

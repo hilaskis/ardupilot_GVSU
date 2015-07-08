@@ -2,6 +2,19 @@
 
 #include "Copter.h"
 
+// Function that is responsible for logging the absolute bearing message.
+void Copter::Log_Write_Bearing(float newAbs, float newMag)
+{
+    struct log_BEARING pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_ABS_BEAR_MSG),
+        //time_us     : hal.scheduler->micros64(),
+        absBearing  : newAbs,
+        mag         : newMag,
+    };
+
+    DataFlash.WriteBlock(&pkt, 128);//sizeof(pkt));
+}
+
 #ifdef USERHOOK_INIT
 void Copter::userhook_init()
 {
@@ -48,8 +61,9 @@ void Copter::userhook_SlowLoop()
 void Copter::userhook_SuperSlowLoop()
 {
     // put your 1Hz code here
-
-    Log_Write_Bearing(180, 25);
+    float testBear (180.0);
+    float testMag (25.0);
+    Log_Write_Bearing(testBear, testMag);//testBear, testMag);
 
 }
 #endif
