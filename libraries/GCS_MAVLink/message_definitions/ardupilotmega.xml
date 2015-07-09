@@ -648,12 +648,16 @@
 
     <message name="TUNED_FREQUENCY" id="187">
         <description>Control the tuned frequency of an SDR</description>
+        <field type="uint8_t" name="target_system">System ID</field>
         <field type="float" name="tuned_freq">Tuned Frequency</field>
     </message>
 
-    <message name="PHASE_OFFSET" id="188">
+    <message name="PI_PACKET" id="188">
       <description>The phase offset of a signal received by an SDR</description>
-      <field type="uint16_t" name="phase_offset">Phase Offset</field>
+      <field type="uint8_t" name="target_system">System ID</field>
+      <field type="float" name="magnitude">Magnitude</field>
+      <field type="float" name="angle">Angle</field>
+      <field type="uint8_t" name="antenna_type">Antenna Type</field>
     </message>
 
     <!-- 191 to 192 RESERVED for mag calibration -->

@@ -489,15 +489,6 @@ void GCS_MAVLINK::handle_request_data_stream(mavlink_message_t *msg, bool save)
     }
 }
 
-void GCS_MAVLINK::handle_tuned_frequency(mavlink_message_t *msg)
-{
-    //TODO Write handler function code to send tuned frequency over UART to Rasp Pi 2 SDR
-    mavlink_tuned_frequency_t packet;
-
-    mavlink_msg_tuned_frequency_decode(msg, &packet);
-    this->send_message(MSG_PHASE_OFFSET);
-}
-
 void GCS_MAVLINK::handle_param_request_list(mavlink_message_t *msg)
 {
     mavlink_param_request_list_t packet;

@@ -37,7 +37,6 @@ enum ap_message {
     MSG_RAW_IMU1,
     MSG_RAW_IMU2,
     MSG_RAW_IMU3,
-    MSG_PHASE_OFFSET,
     MSG_GPS_RAW,
     MSG_SYSTEM_TIME,
     MSG_SERVO_OUT,
@@ -289,7 +288,6 @@ private:
     void handle_mission_clear_all(AP_Mission &mission, mavlink_message_t *msg);
     void handle_mission_write_partial_list(AP_Mission &mission, mavlink_message_t *msg);
     bool handle_mission_item(mavlink_message_t *msg, AP_Mission &mission);
-    void handle_tuned_frequency(mavlink_message_t *msg);
 
     void handle_request_data_stream(mavlink_message_t *msg, bool save);
     void handle_param_request_list(mavlink_message_t *msg);

@@ -463,5 +463,11 @@ void MAVLink_routing::get_targets(const mavlink_message_t* msg, int16_t &sysid, 
         sysid  = mavlink_msg_gimbal_control_get_target_system(msg);
         compid = mavlink_msg_gimbal_control_get_target_component(msg);
         break;
+    case MAVLINK_MSG_ID_TUNED_FREQUENCY:
+        sysid = mavlink_msg_tuned_frequency_get_target_system(msg);
+        break;
+    case MAVLINK_MSG_ID_PI_PACKET:
+        sysid = mavlink_msg_pi_packet_get_target_system(msg);
+        break;
     }
 }

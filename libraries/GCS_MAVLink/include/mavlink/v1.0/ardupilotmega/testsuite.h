@@ -1666,11 +1666,12 @@ static void mavlink_test_tuned_frequency(uint8_t system_id, uint8_t component_id
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_tuned_frequency_t packet_in = {
-		17.0
+		17.0,17
     };
 	mavlink_tuned_frequency_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.tuned_freq = packet_in.tuned_freq;
+        	packet1.target_system = packet_in.target_system;
         
         
 
@@ -1680,12 +1681,12 @@ static void mavlink_test_tuned_frequency(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_tuned_frequency_pack(system_id, component_id, &msg , packet1.tuned_freq );
+	mavlink_msg_tuned_frequency_pack(system_id, component_id, &msg , packet1.target_system , packet1.tuned_freq );
 	mavlink_msg_tuned_frequency_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_tuned_frequency_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.tuned_freq );
+	mavlink_msg_tuned_frequency_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.tuned_freq );
 	mavlink_msg_tuned_frequency_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -1698,38 +1699,41 @@ static void mavlink_test_tuned_frequency(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_tuned_frequency_send(MAVLINK_COMM_1 , packet1.tuned_freq );
+	mavlink_msg_tuned_frequency_send(MAVLINK_COMM_1 , packet1.target_system , packet1.tuned_freq );
 	mavlink_msg_tuned_frequency_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_phase_offset(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_pi_packet(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_phase_offset_t packet_in = {
-		17235
+	mavlink_pi_packet_t packet_in = {
+		17.0,45.0,29,96
     };
-	mavlink_phase_offset_t packet1, packet2;
+	mavlink_pi_packet_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.phase_offset = packet_in.phase_offset;
+        	packet1.magnitude = packet_in.magnitude;
+        	packet1.angle = packet_in.angle;
+        	packet1.target_system = packet_in.target_system;
+        	packet1.antenna_type = packet_in.antenna_type;
         
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_phase_offset_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_phase_offset_decode(&msg, &packet2);
+	mavlink_msg_pi_packet_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_pi_packet_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_phase_offset_pack(system_id, component_id, &msg , packet1.phase_offset );
-	mavlink_msg_phase_offset_decode(&msg, &packet2);
+	mavlink_msg_pi_packet_pack(system_id, component_id, &msg , packet1.target_system , packet1.magnitude , packet1.angle , packet1.antenna_type );
+	mavlink_msg_pi_packet_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_phase_offset_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.phase_offset );
-	mavlink_msg_phase_offset_decode(&msg, &packet2);
+	mavlink_msg_pi_packet_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.magnitude , packet1.angle , packet1.antenna_type );
+	mavlink_msg_pi_packet_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -1737,12 +1741,12 @@ static void mavlink_test_phase_offset(uint8_t system_id, uint8_t component_id, m
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_phase_offset_decode(last_msg, &packet2);
+	mavlink_msg_pi_packet_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_phase_offset_send(MAVLINK_COMM_1 , packet1.phase_offset );
-	mavlink_msg_phase_offset_decode(last_msg, &packet2);
+	mavlink_msg_pi_packet_send(MAVLINK_COMM_1 , packet1.target_system , packet1.magnitude , packet1.angle , packet1.antenna_type );
+	mavlink_msg_pi_packet_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -2746,7 +2750,7 @@ static void mavlink_test_ardupilotmega(uint8_t system_id, uint8_t component_id, 
 	mavlink_test_autopilot_version_request(system_id, component_id, last_msg);
 	mavlink_test_led_control(system_id, component_id, last_msg);
 	mavlink_test_tuned_frequency(system_id, component_id, last_msg);
-	mavlink_test_phase_offset(system_id, component_id, last_msg);
+	mavlink_test_pi_packet(system_id, component_id, last_msg);
 	mavlink_test_ekf_status_report(system_id, component_id, last_msg);
 	mavlink_test_pid_tuning(system_id, component_id, last_msg);
 	mavlink_test_gimbal_report(system_id, component_id, last_msg);

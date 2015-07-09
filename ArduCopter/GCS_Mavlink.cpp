@@ -29,14 +29,6 @@ void Copter::gcs_send_deferred(void)
  *  pattern below when adding any new messages
  */
 
-
-
-NOINLINE void Copter::send_phase_offset(mavlink_channel_t chan)
-{
-    uint16_t tempPhase = 180;
-    mavlink_msg_phase_offset_send(chan, tempPhase);
-}
-
 NOINLINE void Copter::send_heartbeat(mavlink_channel_t chan)
 {
     uint8_t base_mode = MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
@@ -613,12 +605,7 @@ bool GCS_MAVLINK::try_send_message(enum ap_message id)
     case MSG_RAW_IMU3:
         CHECK_PAYLOAD_SIZE(SENSOR_OFFSETS);
         copter.gcs[chan-MAVLINK_COMM_0].send_sensor_offsets(copter.ins, copter.compass, copter.barometer);
-        break;
-
-    case MSG_PHASE_OFFSET:
-        CHECK_PAYLOAD_SIZE(PHASE_OFFSET);
-        copter.send_phase_offset(chan);
-        break;
+        break; 
 
     case MSG_CURRENT_WAYPOINT:
         CHECK_PAYLOAD_SIZE(MISSION_CURRENT);
@@ -992,9 +979,34 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 
     case MAVLINK_MSG_ID_TUNED_FREQUENCY:
     {
-        handle_tuned_frequency(msg);
+        //chan-MAVLINK_COMM_0]
+        //TODO Write handler function code to send tuned frequency over UART to Rasp Pi 2 SDR
+        mavlink_tuned_frequency_t pkt;
+
+        mavlink_msg_tuned_frequency_decode(msg, &pkt);  //Decode packet
+        //mavlink_msg_tuned_frequency_send(chan, pkt.tuned_freq);
+        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_0].chan, pkt.target_system, pkt.tuned_freq);
+        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_1].chan, pkt.target_system, pkt.tuned_freq);
+        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_2].chan, pkt.target_system, pkt.tuned_freq);
+        //mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_3].chan, pkt.tuned_freq); //Forward packet to pi
+        //copter.gcs[chan-MAVLINK_COMM_1].send_tuned_frequency()
+        //handle_tuned_frequency(msg);
+
         break;
     }
+
+
+    case MAVLINK_MSG_ID_PI_PACKET:
+    {
+        mavlink_pi_packet_t pkt;
+        mavlink_msg_pi_packet_decode(msg, &pkt);
+
+        const Compass* comp = copter.ahrs.get_compass();
+        float heading = comp->calculate_heading(copter.ahrs.get_dcm_matrix());
+        mavlink_msg_pi_packet_send(copter.gcs[chan-MAVLINK_COMM_0].chan, pkt.target_system, pkt.magnitude, heading, pkt.antenna_type);
+        break;
+    }
+
 
     case MAVLINK_MSG_ID_SET_MODE:       // MAV ID: 11
     {
