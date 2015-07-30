@@ -121,7 +121,7 @@ public:
 
     // last time we got a non-zero RSSI from RADIO_STATUS
     static uint32_t last_radio_status_remrssi_ms;
-
+    void send_pi_heartbeat(void);
     // common send functions
     void send_meminfo(void);
     void send_power_status(void);

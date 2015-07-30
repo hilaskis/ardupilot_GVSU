@@ -605,7 +605,7 @@ bool GCS_MAVLINK::try_send_message(enum ap_message id)
     case MSG_RAW_IMU3:
         CHECK_PAYLOAD_SIZE(SENSOR_OFFSETS);
         copter.gcs[chan-MAVLINK_COMM_0].send_sensor_offsets(copter.ins, copter.compass, copter.barometer);
-        break; 
+        break;
 
     case MSG_CURRENT_WAYPOINT:
         CHECK_PAYLOAD_SIZE(MISSION_CURRENT);
@@ -962,6 +962,14 @@ void GCS_MAVLINK::handle_change_alt_request(AP_Mission::Mission_Command &cmd)
     // To-Do: update target altitude for loiter or waypoint controller depending upon nav mode
 }
 
+// Used to send a heartbeat packet over the serial connection with the raspberry
+// pi. It's purpose is to prevent the loss of the network route between the Pi and the Pixhawk,
+// in which case the Pi will see no packets that are send by the Pixhawk.
+void GCS_MAVLINK::send_pi_heartbeat()
+{
+    copter.send_heartbeat(chan);
+}
+
 void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 {
     uint8_t result = MAV_RESULT_FAILED;         // assume failure.  Each messages id is responsible for return ACK or NAK if required
@@ -977,36 +985,19 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         break;
     }
 
-    case MAVLINK_MSG_ID_TUNED_FREQUENCY:
-    {
-        //chan-MAVLINK_COMM_0]
-        //TODO Write handler function code to send tuned frequency over UART to Rasp Pi 2 SDR
-        mavlink_tuned_frequency_t pkt;
-
-        mavlink_msg_tuned_frequency_decode(msg, &pkt);  //Decode packet
-        //mavlink_msg_tuned_frequency_send(chan, pkt.tuned_freq);
-        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_0].chan, pkt.target_system, pkt.tuned_freq);
-        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_1].chan, pkt.target_system, pkt.tuned_freq);
-        mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_2].chan, pkt.target_system, pkt.tuned_freq);
-        //mavlink_msg_tuned_frequency_send(copter.gcs[chan-MAVLINK_COMM_3].chan, pkt.tuned_freq); //Forward packet to pi
-        //copter.gcs[chan-MAVLINK_COMM_1].send_tuned_frequency()
-        //handle_tuned_frequency(msg);
-
-        break;
-    }
-
-
     case MAVLINK_MSG_ID_PI_PACKET:
     {
+        //Declare packet structure and populate using the decode method
         mavlink_pi_packet_t pkt;
         mavlink_msg_pi_packet_decode(msg, &pkt);
-
+        //Get the compass heading information (represented in radians)
         const Compass* comp = copter.ahrs.get_compass();
         float heading = comp->calculate_heading(copter.ahrs.get_dcm_matrix());
-        mavlink_msg_pi_packet_send(copter.gcs[chan-MAVLINK_COMM_0].chan, pkt.target_system, pkt.magnitude, heading, pkt.antenna_type);
+        //Send packet down to the ground station with heading information
+        mavlink_msg_pi_packet_send(copter.gcs[chan-MAVLINK_COMM_1].chan, 255,
+            pkt.magnitude, heading, pkt.antenna_type);
         break;
     }
-
 
     case MAVLINK_MSG_ID_SET_MODE:       // MAV ID: 11
     {

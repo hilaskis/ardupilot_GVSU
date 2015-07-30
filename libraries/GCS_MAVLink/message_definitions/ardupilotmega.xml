@@ -660,6 +660,12 @@
       <field type="uint8_t" name="antenna_type">Antenna Type</field>
     </message>
 
+    <message name="RF_GAIN" id="189">
+        <description>The RF gain of the SDR</description>
+        <field type="uint8_t" name="target_system">System ID</field>
+        <field type="float" name="gain">RF Gain</field>
+    </message>
+
     <!-- 191 to 192 RESERVED for mag calibration -->
 
     <!-- EKF status message from autopilot to GCS.   -->
