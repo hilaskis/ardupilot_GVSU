@@ -57,7 +57,6 @@ void Copter::userhook_SuperSlowLoop()
     // This was added to minimize an issue where the firmware was sometimes
     // not detecting the connection to the pi
     copter.gcs[2].send_pi_heartbeat();
-    Log_Write_Bearing(testBear, testMag);
 
 }
 #endif

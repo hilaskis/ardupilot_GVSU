@@ -996,6 +996,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         //Send packet down to the ground station with heading information
         mavlink_msg_pi_packet_send(copter.gcs[chan-MAVLINK_COMM_1].chan, 255,
             pkt.magnitude, heading, pkt.antenna_type);
+        copter.Log_Write_Bearing(heading, pkt.magnitude);
         break;
     }
 
